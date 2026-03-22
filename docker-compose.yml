@@ -36,8 +36,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      provenance: false
-      sbom: false
     container_name: novel-tools-app
     restart: unless-stopped
     depends_on:
