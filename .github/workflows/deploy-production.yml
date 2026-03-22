@@ -1,0 +1,197 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git branch or tag to deploy
+        required: true
+        default: main
+      deploy_env_file:
+        description: Remote docker env file path relative to repo root
+        required: true
+        default: .env.docker
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-bookworm
+        env:
+          POSTGRES_DB: novel_tools
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d novel_tools"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/novel_tools?schema=public
+      BETTER_AUTH_SECRET: ci-better-auth-secret-0123456789abcdef
+      BETTER_AUTH_URL: http://127.0.0.1:3000
+      APP_BASE_URL: http://127.0.0.1:3000
+      ENCRYPTION_KEY: 0000000000000000000000000000000000000000000000000000000000000000
+      PRISMA_DB_SYNC_MODE: deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Apply Prisma migrations
+        run: npx prisma migrate deploy
+
+      - name: Run release validation
+        run: npm run validate:release
+
+      - name: Run docker preflight
+        run: npm run docker:preflight
+
+  publish-image:
+    runs-on: ubuntu-latest
+    needs:
+      - release-gate
+    outputs:
+      image_ref: ${{ steps.image_meta.outputs.image_ref }}
+      image_repo: ${{ steps.image_meta.outputs.image_repo }}
+      image_tag: ${{ steps.image_meta.outputs.image_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Resolve deploy commit
+        id: git_ref
+        shell: bash
+        run: echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Derive image metadata
+        id: image_meta
+        shell: bash
+        run: |
+          owner="$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          repo="$(printf '%s' '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')"
+          image_repo="ghcr.io/${owner}/${repo}"
+          image_tag="${{ steps.git_ref.outputs.commit_sha }}"
+          echo "image_repo=${image_repo}" >> "$GITHUB_OUTPUT"
+          echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
+          echo "image_ref=${image_repo}:${image_tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Log into ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build and push image
+        run: |
+          docker build \
+            --tag "${{ steps.image_meta.outputs.image_repo }}:${{ steps.image_meta.outputs.image_tag }}" \
+            --tag "${{ steps.image_meta.outputs.image_repo }}:latest" \
+            .
+          docker push "${{ steps.image_meta.outputs.image_repo }}:${{ steps.image_meta.outputs.image_tag }}"
+          docker push "${{ steps.image_meta.outputs.image_repo }}:latest"
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs:
+      - publish-image
+    environment:
+      name: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Resolve deploy port
+        id: ssh_meta
+        shell: bash
+        run: |
+          deploy_port="${{ secrets.DEPLOY_PORT }}"
+          if [ -z "$deploy_port" ]; then
+            deploy_port="22"
+          fi
+          echo "deploy_port=${deploy_port}" >> "$GITHUB_OUTPUT"
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "${{ steps.ssh_meta.outputs.deploy_port }}" "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Run remote deploy
+        id: remote_deploy
+        shell: bash
+        run: |
+          set -o pipefail
+          ssh -p "${{ steps.ssh_meta.outputs.deploy_port }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "export DEPLOY_APP_DIR='${{ secrets.DEPLOY_APP_DIR }}' \
+            DEPLOY_REF='${{ inputs.ref }}' \
+            DEPLOY_ENV_FILE='${{ inputs.deploy_env_file }}' \
+            APP_IMAGE='${{ needs.publish-image.outputs.image_ref }}' \
+            GHCR_USERNAME='${{ secrets.GHCR_PULL_USERNAME }}' \
+            GHCR_TOKEN='${{ secrets.GHCR_PULL_TOKEN }}' \
+            DEPLOY_REPORT_ROOT='.deploy-reports'; \
+            sh -s" < ./scripts/deploy-remote.sh | tee remote-deploy-console.log
+
+      - name: Fetch remote deploy report
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p remote-deploy-report
+
+          if ssh -p "${{ steps.ssh_meta.outputs.deploy_port }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "test -d '${{ secrets.DEPLOY_APP_DIR }}/.deploy-reports/latest'"; then
+            ssh -p "${{ steps.ssh_meta.outputs.deploy_port }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+              "cd '${{ secrets.DEPLOY_APP_DIR }}/.deploy-reports' && tar -czf - latest" \
+              > remote-deploy-report/latest-report.tgz
+            tar -xzf remote-deploy-report/latest-report.tgz -C remote-deploy-report
+          else
+            echo "Remote deploy report directory was not found." > remote-deploy-report/fetch-error.txt
+          fi
+
+      - name: Append deploy summary
+        if: always()
+        run: |
+          node ./scripts/render-deploy-summary.mjs \
+            --report-dir remote-deploy-report/latest \
+            --console-log remote-deploy-console.log \
+            --fetch-error-file remote-deploy-report/fetch-error.txt \
+            --console-tail-lines 40 \
+            --image-ref "${{ needs.publish-image.outputs.image_ref }}" \
+            --deploy-ref "${{ inputs.ref }}"
+
+      - name: Upload remote deploy diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: remote-deploy-diagnostics-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            remote-deploy-console.log
+            remote-deploy-report

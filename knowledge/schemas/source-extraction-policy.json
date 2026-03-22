@@ -1,0 +1,74 @@
+[
+  {
+    "sourceType": "txt",
+    "primarySelectors": [
+      "raw_text"
+    ],
+    "fallbackSelectors": [
+      "utf8_ignore_errors"
+    ],
+    "ignorePatterns": [],
+    "keepLinkMetadata": true,
+    "keepAttachmentText": true
+  },
+  {
+    "sourceType": "markdown",
+    "primarySelectors": [
+      "raw_markdown"
+    ],
+    "fallbackSelectors": [
+      "utf8_ignore_errors"
+    ],
+    "ignorePatterns": [],
+    "keepLinkMetadata": true,
+    "keepAttachmentText": true
+  },
+  {
+    "sourceType": "html_static_topic",
+    "primarySelectors": [
+      "#data-preloaded -> topic_* -> post_stream.posts[0].cooked"
+    ],
+    "fallbackSelectors": [
+      "visible_topic_body",
+      "meta[property='og:description']",
+      "meta[name='twitter:description']"
+    ],
+    "ignorePatterns": [
+      "script",
+      "style",
+      "svg",
+      "forum_nav",
+      "ad_slot",
+      "footer",
+      "decorative_image"
+    ],
+    "keepLinkMetadata": true,
+    "keepAttachmentText": true
+  },
+  {
+    "sourceType": "html_attachment_text",
+    "primarySelectors": [
+      "attachment_raw_text"
+    ],
+    "fallbackSelectors": [
+      "attachment_link_label"
+    ],
+    "ignorePatterns": [],
+    "keepLinkMetadata": true,
+    "keepAttachmentText": true
+  },
+  {
+    "sourceType": "html_attachment_binary",
+    "primarySelectors": [
+      "attachment_link_label"
+    ],
+    "fallbackSelectors": [
+      "lightbox_title"
+    ],
+    "ignorePatterns": [
+      "binary_payload"
+    ],
+    "keepLinkMetadata": true,
+    "keepAttachmentText": false
+  }
+]

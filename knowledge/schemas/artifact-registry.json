@@ -1,0 +1,106 @@
+[
+  {
+    "artifactKey": "story_background",
+    "filename": "story_background.md",
+    "kind": "project_setting",
+    "required": true,
+    "template": "story_background",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "world_bible",
+    "filename": "world_bible.md",
+    "kind": "project_setting",
+    "required": true,
+    "template": "world_bible",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "protagonist_card",
+    "filename": "protagonist_card.md",
+    "kind": "project_setting",
+    "required": true,
+    "template": "protagonist_card",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "factions_and_characters",
+    "filename": "factions_and_characters.md",
+    "kind": "project_setting",
+    "required": true,
+    "template": "factions_and_characters",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "writing_rules",
+    "filename": "writing_rules.md",
+    "kind": "project_setting",
+    "required": true,
+    "template": "writing_rules",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "task_plan",
+    "filename": "task_plan.md",
+    "kind": "project_state",
+    "required": true,
+    "template": "task_plan",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "findings",
+    "filename": "findings.md",
+    "kind": "project_state",
+    "required": true,
+    "template": "findings",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "progress",
+    "filename": "progress.md",
+    "kind": "project_state",
+    "required": true,
+    "template": "progress",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "character_relationships",
+    "filename": "character_relationships.md",
+    "kind": "project_state",
+    "required": true,
+    "template": "character_relationships",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "current_state_card",
+    "filename": "99_当前状态卡.md",
+    "kind": "project_state",
+    "required": true,
+    "template": "current_state_card",
+    "createdAtInit": true
+  },
+  {
+    "artifactKey": "pending_hooks",
+    "filename": "pending_hooks.md",
+    "kind": "hook_pool",
+    "required": false,
+    "template": "pending_hooks",
+    "createdAtInit": false
+  },
+  {
+    "artifactKey": "particle_ledger",
+    "filename": "particle_ledger.md",
+    "kind": "ledger",
+    "required": false,
+    "template": "particle_ledger",
+    "createdAtInit": false
+  },
+  {
+    "artifactKey": "outline_master",
+    "filename": "outline_master.md",
+    "kind": "project_outline",
+    "required": false,
+    "template": "outline_master",
+    "createdAtInit": false
+  }
+]

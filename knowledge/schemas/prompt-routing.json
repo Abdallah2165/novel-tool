@@ -1,0 +1,56 @@
+[
+  {
+    "taskType": "ingest_sources",
+    "promptFile": "ingest_sources.md",
+    "outputContract": "结构化结果 + 需更新文件",
+    "fallbackPromptFile": "workflow_check.md"
+  },
+  {
+    "taskType": "workflow_check",
+    "promptFile": "workflow_check.md",
+    "outputContract": "结构化结果 + 需更新文件",
+    "fallbackPromptFile": "workflow_check.md"
+  },
+  {
+    "taskType": "generate_setting",
+    "promptFile": "generate_setting.md",
+    "outputContract": "结构化结果 + 需更新文件",
+    "fallbackPromptFile": "workflow_check.md"
+  },
+  {
+    "taskType": "generate_outline",
+    "promptFile": "generate_outline.md",
+    "outputContract": "结构化结果 + 需更新文件",
+    "fallbackPromptFile": "generate_setting.md"
+  },
+  {
+    "taskType": "generate_chapter",
+    "promptFile": "generate_chapter.md",
+    "outputContract": "写作自检 + 正文 + 可选章节结算 + 回填补丁",
+    "fallbackPromptFile": "review_content.md"
+  },
+  {
+    "taskType": "review_content",
+    "promptFile": "review_content.md",
+    "outputContract": "问题 -> 证据 -> 最小修法",
+    "fallbackPromptFile": "workflow_check.md"
+  },
+  {
+    "taskType": "minimal_fix",
+    "promptFile": "minimal_fix.md",
+    "outputContract": "修改稿 + 修改摘要",
+    "fallbackPromptFile": "review_content.md"
+  },
+  {
+    "taskType": "sync_state",
+    "promptFile": "sync_state.md",
+    "outputContract": "文件补丁清单",
+    "fallbackPromptFile": "workflow_check.md"
+  },
+  {
+    "taskType": "research_fact_check",
+    "promptFile": "research_fact_check.md",
+    "outputContract": "事实结论 + 来源",
+    "fallbackPromptFile": "review_content.md"
+  }
+]

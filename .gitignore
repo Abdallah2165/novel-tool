@@ -1,0 +1,17 @@
+.ace-tool/
+node_modules/
+.next/
+.deploy-reports/
+.tmp-*/
+.env
+.env.*
+!.env.example
+!.env.docker.example
+tmp/
+.data/
+*.tsbuildinfo
+remote-deploy-console.log
+remote-deploy-report/
+PLAN.md
+APPENDIX_*.md
+PROGRESS.md

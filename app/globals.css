@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f2ebe0;
+  --paper: #fffdf8;
+  --paper-soft: #f8f2e8;
+  --panel: rgba(255, 250, 242, 0.82);
+  --panel-strong: rgba(247, 238, 223, 0.9);
+  --line: rgba(124, 103, 76, 0.16);
+  --ink: #2c221b;
+  --ink-soft: #46352b;
+  --muted-ink: #79675b;
+  --accent: #b79052;
+  --accent-ink: #8f672e;
+  --ring: rgba(183, 144, 82, 0.48);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent 28%),
+    radial-gradient(circle at top right, rgba(223, 198, 157, 0.18), transparent 22%),
+    linear-gradient(180deg, #f4ede3 0%, #efe6d8 45%, #ede3d4 100%);
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", "Songti SC", serif;
+}
+
+:where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(183, 144, 82, 0.26);
+}
+
+.paper-grid {
+  background-image:
+    linear-gradient(rgba(120, 94, 66, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 94, 66, 0.05) 1px, transparent 1px);
+  background-position: -1px -1px;
+  background-size: 24px 24px;
+}
+
+.soft-divider {
+  border-color: rgba(124, 103, 76, 0.12);
+}
+
+.editor-column {
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.94), rgba(251, 246, 238, 0.94)),
+    radial-gradient(circle at top, rgba(215, 194, 163, 0.16), transparent 48%);
+}
+
+.novel-editor .cm-editor {
+  min-height: 560px;
+  border-radius: 24px;
+  background: rgba(255, 252, 246, 0.88);
+  border: 1px solid rgba(124, 103, 76, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.novel-editor .cm-scroller {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", "Songti SC", serif;
+  font-size: 18px;
+  line-height: 2.05;
+  padding: 24px 28px 40px;
+}
+
+.novel-editor .cm-focused {
+  outline: none;
+}
+
+.novel-editor .cm-line {
+  text-indent: 2em;
+}
+
+.novel-editor .cm-gutters {
+  background: transparent;
+  border-right: 1px solid rgba(124, 103, 76, 0.08);
+  color: rgba(121, 103, 91, 0.72);
+}

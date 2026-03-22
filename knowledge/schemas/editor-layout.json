@@ -1,0 +1,46 @@
+[
+  {
+    "pageType": "chapter_editor",
+    "layoutMode": "three_pane",
+    "leftPanel": [
+      "chapter_list",
+      "project_nav"
+    ],
+    "centerPanel": [
+      "chapter_header",
+      "novel_editor"
+    ],
+    "rightPanel": [
+      "generation_actions",
+      "model_panel",
+      "context_panel"
+    ],
+    "editorEngine": "codemirror6",
+    "storageFormat": "markdown_artifact",
+    "inputMode": "plain_text_novel",
+    "autosaveIntervalMs": 5000,
+    "focusModeEnabled": true,
+    "visualPreset": "qidian_tomato_minimal"
+  },
+  {
+    "pageType": "review_editor",
+    "layoutMode": "three_pane",
+    "leftPanel": [
+      "source_text"
+    ],
+    "centerPanel": [
+      "review_findings"
+    ],
+    "rightPanel": [
+      "candidate_revision",
+      "diff_panel",
+      "accept_actions"
+    ],
+    "editorEngine": "codemirror6",
+    "storageFormat": "markdown_artifact",
+    "inputMode": "plain_text_novel",
+    "autosaveIntervalMs": 5000,
+    "focusModeEnabled": false,
+    "visualPreset": "qidian_tomato_minimal"
+  }
+]

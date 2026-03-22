@@ -1,0 +1,387 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProviderType {
+  openai
+  gemini
+  anthropic
+}
+
+enum AuthMode {
+  none
+  bearer
+  api_key
+  custom_header
+}
+
+enum HealthStatus {
+  healthy
+  degraded
+  invalid_auth
+  unreachable
+  misconfigured
+}
+
+enum McpTransportType {
+  streamable_http
+  sse
+}
+
+enum ProjectStatus {
+  active
+  archived
+}
+
+enum ReferenceSourceType {
+  txt
+  markdown
+  html_static_topic
+  html_attachment_text
+  html_attachment_binary
+}
+
+enum ArtifactKind {
+  canonical
+  project_setting
+  project_state
+  project_outline
+  project_chapter
+  review_report
+  ledger
+  hook_pool
+}
+
+enum RunStatus {
+  queued
+  running
+  succeeded
+  failed
+  canceled
+}
+
+enum DraftStatus {
+  pending
+  ready
+  accepted
+  rejected
+  superseded
+}
+
+enum DraftKind {
+  generated_output
+  editor_autosave
+  review_revision
+}
+
+enum OnboardingSessionStatus {
+  active
+  ready
+  finalized
+}
+
+model User {
+  id                String                      @id @default(cuid())
+  name              String                      @default("Novel Tools User")
+  email             String                      @unique
+  emailVerified     Boolean                     @default(false)
+  image             String?
+  createdAt         DateTime                    @default(now())
+  updatedAt         DateTime                    @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  providerEndpoints ProviderEndpoint[]
+  mcpServers        McpServer[]
+  grokConfig        UserGrokConfig?
+  projects          Project[]
+  onboardingSessions ProjectOnboardingSession[]
+  acceptedRevisions WorkspaceArtifactRevision[] @relation("AcceptedRevisionUser")
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String   @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model ProviderEndpoint {
+  id                String       @id @default(cuid())
+  userId            String
+  providerType      ProviderType
+  label             String
+  baseURL           String
+  authMode          AuthMode
+  encryptedSecret   String
+  encryptedHeaders  Json
+  defaultModel      String
+  healthStatus      HealthStatus @default(misconfigured)
+  lastHealthCheckAt DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectPreferences ProjectPreference[]
+  generationRuns    GenerationRun[]
+
+  @@index([userId, providerType])
+}
+
+model McpServer {
+  id                   String           @id @default(cuid())
+  userId               String
+  name                 String
+  transportType        McpTransportType
+  serverUrl            String
+  authMode             AuthMode
+  encryptedAuth        String?
+  encryptedHeaders     Json
+  toolCount            Int              @default(0)
+  resourceCount        Int              @default(0)
+  promptCount          Int              @default(0)
+  capabilitiesSnapshot Json?
+  healthStatus         HealthStatus     @default(misconfigured)
+  lastSyncAt           DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, transportType])
+}
+
+model UserGrokConfig {
+  id                        String       @id @default(cuid())
+  userId                    String       @unique
+  grokApiUrl                String
+  encryptedGrokApiKey       String
+  grokModel                 String
+  tavilyApiUrl              String?
+  encryptedTavilyApiKey     String?
+  firecrawlApiUrl           String?
+  encryptedFirecrawlApiKey  String?
+  healthStatus              HealthStatus @default(misconfigured)
+  lastHealthCheckAt         DateTime?
+  createdAt                 DateTime     @default(now())
+  updatedAt                 DateTime     @updatedAt
+  user                      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, updatedAt(sort: Desc)])
+}
+
+model Project {
+  id          String              @id @default(cuid())
+  userId      String
+  name        String
+  genre       String
+  platform    String
+  status      ProjectStatus       @default(active)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preference  ProjectPreference?
+  references  ReferenceDocument[]
+  artifacts   WorkspaceArtifact[]
+  runs        GenerationRun[]
+  drafts      Draft[]
+  grokSearchTraces GrokSearchTrace[]
+
+  @@index([userId, updatedAt(sort: Desc)])
+}
+
+model ProjectPreference {
+  id                    String            @id @default(cuid())
+  projectId             String            @unique
+  defaultEndpointId     String?
+  defaultModel          String?
+  defaultTaskType       String?
+  apiPresets            Json              @default("[]")
+  exportRecords         Json              @default("[]")
+  ledgerEnabled         Boolean           @default(false)
+  showSelfCheck         Boolean           @default(true)
+  showSettlement        Boolean           @default(true)
+  activeChapterArtifactId String?
+  chapterIndex          Json              @default("[]")
+  editorLayoutPrefs     Json              @default("{}")
+  project               Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  defaultEndpoint       ProviderEndpoint? @relation(fields: [defaultEndpointId], references: [id], onDelete: SetNull)
+}
+
+model ReferenceDocument {
+  id               String              @id @default(cuid())
+  projectId        String
+  filename         String
+  sourceType       ReferenceSourceType
+  mimeType         String
+  storageKey       String?
+  sourceUrl        String?
+  extractionMethod String?
+  extractedText    String?
+  normalizedText   String?
+  tags             Json
+  createdAt        DateTime            @default(now())
+  project          Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt(sort: Desc)])
+}
+
+model WorkspaceArtifact {
+  id                String                    @id @default(cuid())
+  projectId         String
+  artifactKey       String
+  filename          String
+  kind              ArtifactKind
+  currentRevisionId String?                   @unique
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  project           Project                   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  currentRevision   WorkspaceArtifactRevision? @relation("CurrentArtifactRevision", fields: [currentRevisionId], references: [id], onDelete: SetNull)
+  revisions         WorkspaceArtifactRevision[] @relation("ArtifactRevisions")
+  drafts            Draft[]
+
+  @@unique([projectId, artifactKey])
+  @@index([projectId, kind])
+}
+
+model WorkspaceArtifactRevision {
+  id               String            @id @default(cuid())
+  artifactId       String
+  content          String
+  summary          String
+  sourceDraftId    String?
+  sourceRunId      String?
+  acceptedByUserId String?
+  createdAt        DateTime          @default(now())
+  artifact         WorkspaceArtifact @relation("ArtifactRevisions", fields: [artifactId], references: [id], onDelete: Cascade)
+  sourceDraft      Draft?            @relation(fields: [sourceDraftId], references: [id], onDelete: SetNull)
+  sourceRun        GenerationRun?    @relation(fields: [sourceRunId], references: [id], onDelete: SetNull)
+  acceptedByUser   User?             @relation("AcceptedRevisionUser", fields: [acceptedByUserId], references: [id], onDelete: SetNull)
+  currentFor       WorkspaceArtifact? @relation("CurrentArtifactRevision")
+
+  @@index([artifactId, createdAt(sort: Desc)])
+}
+
+model GenerationRun {
+  id                     String                    @id @default(cuid())
+  projectId              String
+  taskType               String
+  endpointId             String
+  modelId                String
+  selectedArtifactIds    Json
+  selectedReferenceIds   Json
+  selectedMcpServerIds   Json
+  resolvedPrompt         String
+  resolvedSkills         Json
+  resolvedContextArtifacts Json
+  toolCallsSummary       Json?
+  usage                  Json?
+  archiveStorageKey      String?
+  archiveObjectStoreMode String?
+  archiveByteSize        Int?
+  archiveContentType     String?
+  status                 RunStatus                 @default(queued)
+  errorSummary           String?
+  createdAt              DateTime                  @default(now())
+  project                Project                   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  endpoint               ProviderEndpoint          @relation(fields: [endpointId], references: [id], onDelete: Restrict)
+  drafts                 Draft[]
+  revisions              WorkspaceArtifactRevision[]
+
+  @@index([projectId, createdAt(sort: Desc)])
+}
+
+model Draft {
+  id               String                    @id @default(cuid())
+  projectId        String
+  runId            String?
+  artifactId       String?
+  taskType         String
+  outputContent    String
+  suggestedPatches Json
+  status           DraftStatus               @default(ready)
+  draftKind        DraftKind                 @default(generated_output)
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  project          Project                   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  run              GenerationRun?            @relation(fields: [runId], references: [id], onDelete: SetNull)
+  artifact         WorkspaceArtifact?        @relation(fields: [artifactId], references: [id], onDelete: SetNull)
+  revisions        WorkspaceArtifactRevision[]
+
+  @@index([projectId, updatedAt(sort: Desc)])
+  @@index([projectId, draftKind, artifactId, updatedAt(sort: Desc)])
+}
+
+model GrokSearchTrace {
+  id             String   @id @default(cuid())
+  projectId      String
+  sessionId      String   @unique
+  toolName       String
+  requestPayload Json
+  responsePayload Json
+  sourceItems    Json
+  createdAt      DateTime @default(now())
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt(sort: Desc)])
+}
+
+model ProjectOnboardingSession {
+  id                  String                  @id @default(cuid())
+  userId              String
+  status              OnboardingSessionStatus @default(active)
+  currentQuestionIndex Int                    @default(0)
+  answers             Json                    @default("[]")
+  summary             Json                    @default("{}")
+  finalizedProjectId  String?
+  completedAt         DateTime?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  user                User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, updatedAt(sort: Desc)])
+}

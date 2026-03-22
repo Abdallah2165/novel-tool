@@ -1,0 +1,164 @@
+[
+  {
+    "taskType": "ingest_sources",
+    "label": "资料吸收",
+    "description": "吸收参考资料并提炼结构化规则。",
+    "requiresArtifacts": [],
+    "defaultPrompt": "ingest_sources.md",
+    "defaultSkills": [
+      "planner",
+      "researcher",
+      "reviewer"
+    ],
+    "supportsMcp": true,
+    "supportsSearch": true,
+    "outputContract": "结构化结果 + 需更新文件"
+  },
+  {
+    "taskType": "workflow_check",
+    "label": "流程检查",
+    "description": "检查项目缺口与继续生产的前置条件。",
+    "requiresArtifacts": [
+      "task_plan",
+      "progress",
+      "current_state_card"
+    ],
+    "defaultPrompt": "workflow_check.md",
+    "defaultSkills": [
+      "planner",
+      "reviewer"
+    ],
+    "supportsMcp": false,
+    "supportsSearch": false,
+    "outputContract": "结构化结果 + 需更新文件"
+  },
+  {
+    "taskType": "generate_setting",
+    "label": "设定生成",
+    "description": "生成或补全故事设定与角色资料。",
+    "requiresArtifacts": [
+      "story_background",
+      "world_bible",
+      "protagonist_card",
+      "factions_and_characters",
+      "writing_rules"
+    ],
+    "defaultPrompt": "generate_setting.md",
+    "defaultSkills": [
+      "planner",
+      "setting_architect"
+    ],
+    "supportsMcp": false,
+    "supportsSearch": false,
+    "outputContract": "结构化结果 + 需更新文件"
+  },
+  {
+    "taskType": "generate_outline",
+    "label": "大纲生成",
+    "description": "生成卷纲、节拍表与回收点。",
+    "requiresArtifacts": [
+      "story_background",
+      "world_bible",
+      "protagonist_card",
+      "writing_rules",
+      "task_plan"
+    ],
+    "defaultPrompt": "generate_outline.md",
+    "defaultSkills": [
+      "planner",
+      "setting_architect",
+      "writer"
+    ],
+    "supportsMcp": false,
+    "supportsSearch": false,
+    "outputContract": "结构化结果 + 需更新文件"
+  },
+  {
+    "taskType": "generate_chapter",
+    "label": "章节生成",
+    "description": "生成续写、补写或改写正文。",
+    "requiresArtifacts": [
+      "writing_rules",
+      "task_plan",
+      "findings",
+      "progress",
+      "current_state_card"
+    ],
+    "defaultPrompt": "generate_chapter.md",
+    "defaultSkills": [
+      "writer",
+      "reviewer"
+    ],
+    "supportsMcp": true,
+    "supportsSearch": true,
+    "outputContract": "写作自检 + 正文 + 可选章节结算 + 回填补丁"
+  },
+  {
+    "taskType": "review_content",
+    "label": "内容审稿",
+    "description": "定位问题、证据与最小修法。",
+    "requiresArtifacts": [
+      "writing_rules",
+      "current_state_card"
+    ],
+    "defaultPrompt": "review_content.md",
+    "defaultSkills": [
+      "reviewer",
+      "researcher"
+    ],
+    "supportsMcp": true,
+    "supportsSearch": true,
+    "outputContract": "问题 -> 证据 -> 最小修法"
+  },
+  {
+    "taskType": "minimal_fix",
+    "label": "最小修法",
+    "description": "对已确认问题做最小范围修改。",
+    "requiresArtifacts": [
+      "writing_rules"
+    ],
+    "defaultPrompt": "minimal_fix.md",
+    "defaultSkills": [
+      "reviewer",
+      "writer"
+    ],
+    "supportsMcp": false,
+    "supportsSearch": false,
+    "outputContract": "修改稿 + 修改摘要"
+  },
+  {
+    "taskType": "sync_state",
+    "label": "状态回填",
+    "description": "把生成结果同步到状态类文件。",
+    "requiresArtifacts": [
+      "findings",
+      "progress",
+      "current_state_card"
+    ],
+    "defaultPrompt": "sync_state.md",
+    "defaultSkills": [
+      "ledger_keeper",
+      "planner"
+    ],
+    "supportsMcp": false,
+    "supportsSearch": false,
+    "outputContract": "文件补丁清单"
+  },
+  {
+    "taskType": "research_fact_check",
+    "label": "考据核查",
+    "description": "进行现实事实考据与实时信息补充。",
+    "requiresArtifacts": [
+      "writing_rules",
+      "current_state_card"
+    ],
+    "defaultPrompt": "research_fact_check.md",
+    "defaultSkills": [
+      "researcher",
+      "reviewer"
+    ],
+    "supportsMcp": true,
+    "supportsSearch": true,
+    "outputContract": "事实结论 + 来源"
+  }
+]

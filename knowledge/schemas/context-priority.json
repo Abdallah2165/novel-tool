@@ -1,0 +1,228 @@
+[
+  {
+    "taskType": "ingest_sources",
+    "priorityOrder": [
+      "user_instruction",
+      "selected_references",
+      "knowledge_rules",
+      "external_facts"
+    ],
+    "defaultWindow": {
+      "maxReferenceDocs": 12,
+      "maxSourceChars": 60000,
+      "includeHtmlPrimaryPost": true
+    },
+    "expansionRules": [
+      {
+        "when": "存在来源冲突或规则重复",
+        "expandTo": "相关来源全文与冲突摘要"
+      },
+      {
+        "when": "HTML 含附件或 onebox",
+        "expandTo": "保留链接标题、附件文本与摘要"
+      }
+    ]
+  },
+  {
+    "taskType": "workflow_check",
+    "priorityOrder": [
+      "user_instruction",
+      "project_artifacts",
+      "knowledge_rules"
+    ],
+    "defaultWindow": {
+      "maxArtifacts": 10,
+      "includeDrafts": true,
+      "preferAcceptedRevisions": true
+    },
+    "expansionRules": [
+      {
+        "when": "状态文件缺失",
+        "expandTo": "artifact-registry 与 file-templates"
+      },
+      {
+        "when": "任务流无法闭环",
+        "expandTo": "prompt-routing 与 skill-composition"
+      }
+    ]
+  },
+  {
+    "taskType": "generate_setting",
+    "priorityOrder": [
+      "user_instruction",
+      "project_setting_artifacts",
+      "knowledge_rules",
+      "selected_references"
+    ],
+    "defaultWindow": {
+      "maxArtifacts": 6,
+      "includeLatestAccepted": true,
+      "maxReferenceChars": 16000
+    },
+    "expansionRules": [
+      {
+        "when": "存在旧设定冲突",
+        "expandTo": "findings 与相关 revision 摘要"
+      },
+      {
+        "when": "用户要求补真实世界事实",
+        "expandTo": "external_facts"
+      }
+    ]
+  },
+  {
+    "taskType": "generate_outline",
+    "priorityOrder": [
+      "user_instruction",
+      "project_setting_artifacts",
+      "task_plan",
+      "knowledge_rules"
+    ],
+    "defaultWindow": {
+      "maxArtifacts": 7,
+      "includeLatestAccepted": true,
+      "chapterLookback": 0
+    },
+    "expansionRules": [
+      {
+        "when": "需要回收长线伏笔",
+        "expandTo": "pending_hooks 与 findings"
+      },
+      {
+        "when": "已有旧卷纲",
+        "expandTo": "outline_master 最新 revision"
+      }
+    ]
+  },
+  {
+    "taskType": "generate_chapter",
+    "priorityOrder": [
+      "user_instruction",
+      "current_state_card",
+      "writing_rules",
+      "recent_chapters",
+      "findings",
+      "progress",
+      "knowledge_rules",
+      "external_facts"
+    ],
+    "defaultWindow": {
+      "chapterLookback": 3,
+      "maxArtifacts": 6,
+      "includeDraftIfEditing": true,
+      "preferStateCard": true
+    },
+    "expansionRules": [
+      {
+        "when": "长线伏笔回收或连续大战",
+        "expandTo": "recent_chapters:10"
+      },
+      {
+        "when": "吞噬/突破/卷末/地图切换",
+        "expandTo": "particle_ledger + pending_hooks"
+      }
+    ]
+  },
+  {
+    "taskType": "review_content",
+    "priorityOrder": [
+      "user_instruction",
+      "current_state_card",
+      "current_draft_or_revision",
+      "writing_rules",
+      "knowledge_rules",
+      "external_facts"
+    ],
+    "defaultWindow": {
+      "chapterLookback": 2,
+      "maxArtifacts": 5,
+      "includeCurrentDraft": true
+    },
+    "expansionRules": [
+      {
+        "when": "疑似设定冲突",
+        "expandTo": "相关设定文件与 findings"
+      },
+      {
+        "when": "疑似事实错误",
+        "expandTo": "external_facts 与 research_fact_check"
+      }
+    ]
+  },
+  {
+    "taskType": "minimal_fix",
+    "priorityOrder": [
+      "user_instruction",
+      "review_report",
+      "current_draft_or_revision",
+      "writing_rules",
+      "current_state_card"
+    ],
+    "defaultWindow": {
+      "maxArtifacts": 4,
+      "includeCurrentDraft": true,
+      "chapterLookback": 1
+    },
+    "expansionRules": [
+      {
+        "when": "修法影响状态",
+        "expandTo": "current_state_card 与 progress"
+      },
+      {
+        "when": "修法触及伏笔/数值",
+        "expandTo": "pending_hooks + particle_ledger"
+      }
+    ]
+  },
+  {
+    "taskType": "sync_state",
+    "priorityOrder": [
+      "user_instruction",
+      "current_state_card",
+      "findings",
+      "progress",
+      "pending_hooks",
+      "particle_ledger"
+    ],
+    "defaultWindow": {
+      "maxArtifacts": 6,
+      "includeAcceptedOnly": false,
+      "includeCurrentDraft": true
+    },
+    "expansionRules": [
+      {
+        "when": "当前结果涉及大节点",
+        "expandTo": "task_plan 与相关 outline"
+      },
+      {
+        "when": "当前结果涉及角色关系变更",
+        "expandTo": "character_relationships"
+      }
+    ]
+  },
+  {
+    "taskType": "research_fact_check",
+    "priorityOrder": [
+      "user_instruction",
+      "current_state_card",
+      "selected_references",
+      "knowledge_rules",
+      "external_facts"
+    ],
+    "defaultWindow": {
+      "maxArtifacts": 4,
+      "searchBudgetSeconds": 60,
+      "maxFactItems": 8
+    },
+    "expansionRules": [
+      {
+        "when": "出现事实冲突",
+        "expandTo": "更多交叉来源与冲突摘要"
+      },
+      {
+        "when": "需要写回项目",
+        "expandTo": "对应 artifact 的补丁建议"
+      }
+    ]
+  }
+]

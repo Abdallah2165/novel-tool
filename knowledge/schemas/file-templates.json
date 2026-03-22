@@ -1,0 +1,140 @@
+[
+  {
+    "templateKey": "story_background",
+    "filename": "story_background.md",
+    "sections": [
+      "题材定位",
+      "故事前提",
+      "核心矛盾",
+      "读者收益逻辑"
+    ],
+    "tableSchemas": []
+  },
+  {
+    "templateKey": "world_bible",
+    "filename": "world_bible.md",
+    "sections": [
+      "世界规则",
+      "地图与地理",
+      "能力体系",
+      "禁忌与限制"
+    ],
+    "tableSchemas": []
+  },
+  {
+    "templateKey": "protagonist_card",
+    "filename": "protagonist_card.md",
+    "sections": [
+      "角色定位",
+      "核心动机",
+      "能力与短板",
+      "关系锚点"
+    ],
+    "tableSchemas": []
+  },
+  {
+    "templateKey": "factions_and_characters",
+    "filename": "factions_and_characters.md",
+    "sections": [
+      "势力清单",
+      "主要角色",
+      "利益链",
+      "敌我格局"
+    ],
+    "tableSchemas": []
+  },
+  {
+    "templateKey": "writing_rules",
+    "filename": "writing_rules.md",
+    "sections": [
+      "平台与题材",
+      "风格边界",
+      "主角路线",
+      "禁写清单",
+      "输出要求"
+    ],
+    "tableSchemas": []
+  },
+  {
+    "templateKey": "task_plan",
+    "filename": "task_plan.md",
+    "sections": [
+      "目标",
+      "当前阶段",
+      "关键问题",
+      "决策记录",
+      "风险与阻塞"
+    ],
+    "tableSchemas": []
+  },
+  {
+    "templateKey": "findings",
+    "filename": "findings.md",
+    "sections": [
+      "发现记录"
+    ],
+    "tableSchemas": [
+      "findings_table"
+    ]
+  },
+  {
+    "templateKey": "progress",
+    "filename": "progress.md",
+    "sections": [
+      "进度记录"
+    ],
+    "tableSchemas": [
+      "progress_table"
+    ]
+  },
+  {
+    "templateKey": "character_relationships",
+    "filename": "character_relationships.md",
+    "sections": [
+      "人物关系矩阵"
+    ],
+    "tableSchemas": [
+      "character_relationships_table"
+    ]
+  },
+  {
+    "templateKey": "current_state_card",
+    "filename": "99_当前状态卡.md",
+    "sections": [
+      "当前状态"
+    ],
+    "tableSchemas": [
+      "current_state_table"
+    ]
+  },
+  {
+    "templateKey": "pending_hooks",
+    "filename": "pending_hooks.md",
+    "sections": [
+      "待回收伏笔"
+    ],
+    "tableSchemas": [
+      "pending_hooks_table"
+    ]
+  },
+  {
+    "templateKey": "particle_ledger",
+    "filename": "particle_ledger.md",
+    "sections": [
+      "资源账本"
+    ],
+    "tableSchemas": [
+      "particle_ledger_table"
+    ]
+  },
+  {
+    "templateKey": "outline_master",
+    "filename": "outline_master.md",
+    "sections": [
+      "卷纲",
+      "节拍表",
+      "回收点"
+    ],
+    "tableSchemas": []
+  }
+]

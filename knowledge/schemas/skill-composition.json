@@ -1,0 +1,76 @@
+[
+  {
+    "taskType": "ingest_sources",
+    "skills": [
+      "planner",
+      "researcher",
+      "reviewer"
+    ],
+    "notes": "先提炼规则，再核对来源冲突并输出结构化结果。"
+  },
+  {
+    "taskType": "workflow_check",
+    "skills": [
+      "planner",
+      "reviewer"
+    ],
+    "notes": "先查缺口，再判断风险与继续条件。"
+  },
+  {
+    "taskType": "generate_setting",
+    "skills": [
+      "planner",
+      "setting_architect"
+    ],
+    "notes": "先锁定边界，再补齐设定。"
+  },
+  {
+    "taskType": "generate_outline",
+    "skills": [
+      "planner",
+      "setting_architect",
+      "writer"
+    ],
+    "notes": "先确定卷纲骨架，再让 writer 细化节拍。"
+  },
+  {
+    "taskType": "generate_chapter",
+    "skills": [
+      "writer",
+      "reviewer"
+    ],
+    "notes": "writer 负责正文推进，reviewer 负责即时风险扫描。"
+  },
+  {
+    "taskType": "review_content",
+    "skills": [
+      "reviewer",
+      "researcher"
+    ],
+    "notes": "reviewer 找问题，researcher 负责事实核查。"
+  },
+  {
+    "taskType": "minimal_fix",
+    "skills": [
+      "reviewer",
+      "writer"
+    ],
+    "notes": "reviewer 限定范围，writer 只做最小修法。"
+  },
+  {
+    "taskType": "sync_state",
+    "skills": [
+      "ledger_keeper",
+      "planner"
+    ],
+    "notes": "ledger_keeper 生成补丁，planner 校验受影响文件。"
+  },
+  {
+    "taskType": "research_fact_check",
+    "skills": [
+      "researcher",
+      "reviewer"
+    ],
+    "notes": "researcher 取事实，reviewer 过滤无关噪音。"
+  }
+]

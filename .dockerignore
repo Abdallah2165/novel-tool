@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+!.env.docker.example
+.git
+.gitignore
+.next
+node_modules
+npm-debug.log
+tmp
+tsconfig.tsbuildinfo
+参考资料
