@@ -11,7 +11,7 @@ import {
   REFERENCE_SOURCE_TYPES,
   TASK_TYPES,
 } from "@/lib/types/domain";
-import { API_PRESET_KEYS } from "@/lib/projects/api-presets";
+import { API_PRESET_LIMIT } from "@/lib/projects/api-presets";
 import { EXPORT_BUNDLE_KEYS } from "@/lib/projects/export-bundles";
 
 const keyValueRecord = z.record(z.string(), z.string()).default({});
@@ -108,7 +108,7 @@ export const blankOnboardingFinalizeSchema = z.object({
 });
 
 const apiPresetInputSchema = z.object({
-  presetKey: z.enum(API_PRESET_KEYS),
+  presetKey: z.string().trim().min(1).max(80),
   label: z.string().min(1).max(80),
   endpointId: z.string().min(1).nullable(),
   modelId: z.string().min(1).max(120).nullable(),
@@ -122,7 +122,7 @@ export const projectPreferenceUpdateSchema = z.object({
   defaultModel: z.string().min(1).max(120).nullable().optional(),
   defaultTaskType: z.enum(TASK_TYPES).nullable().optional(),
   activeChapterArtifactId: z.string().min(1).nullable().optional(),
-  apiPresets: z.array(apiPresetInputSchema).max(API_PRESET_KEYS.length).optional(),
+  apiPresets: z.array(apiPresetInputSchema).max(API_PRESET_LIMIT).optional(),
 });
 
 export const referenceInputSchema = z.object({

@@ -151,27 +151,33 @@ export async function PromptStudioPanel({ project }: { project: ResolvedWorkbenc
         />
       </SectionPanel>
 
-      <SectionPanel title="默认参数与 API 预设" description="项目级模型默认值和写作 / 审稿 / 考据三类预设统一在这里保存。">
-        <div className="mb-5 grid gap-3 md:grid-cols-3">
-          {apiPresets.map((preset) => {
-            const endpoint = preset.endpointId ? endpointMap.get(preset.endpointId) : null;
+      <SectionPanel title="默认参数与 API 预设" description="项目级模型默认值和可自定义的 API 预设统一在这里保存。">
+        {apiPresets.length > 0 ? (
+          <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {apiPresets.map((preset) => {
+              const endpoint = preset.endpointId ? endpointMap.get(preset.endpointId) : null;
 
-            return (
-              <div key={preset.presetKey} className="rounded-[20px] border border-[var(--line)] bg-[var(--paper)] p-4">
-                <p className="text-sm text-[var(--ink)]">{preset.label}</p>
-                <p className="mt-2 text-xs leading-6 text-[var(--muted-ink)]">
-                  任务：{getTaskDisplayLabel(preset.taskType)}
-                  <br />
-                  模型接口：{endpoint?.label ?? "未设置"}
-                  <br />
-                  模型：{preset.modelId ?? "未设置"}
-                  <br />
-                  随机度：{preset.temperature ?? "未设置"} / 最大输出字数：{preset.maxTokens ?? "未设置"}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+              return (
+                <div key={preset.presetKey} className="rounded-[20px] border border-[var(--line)] bg-[var(--paper)] p-4">
+                  <p className="text-sm text-[var(--ink)]">{preset.label}</p>
+                  <p className="mt-2 text-xs leading-6 text-[var(--muted-ink)]">
+                    任务：{getTaskDisplayLabel(preset.taskType)}
+                    <br />
+                    模型接口：{endpoint?.label ?? "未设置"}
+                    <br />
+                    模型：{preset.modelId ?? "未设置"}
+                    <br />
+                    随机度：{preset.temperature ?? "未设置"} / 最大输出字数：{preset.maxTokens ?? "未设置"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mb-5 rounded-[20px] border border-dashed border-[var(--line)] bg-[var(--paper)] p-4 text-sm leading-6 text-[var(--muted-ink)]">
+            当前项目还没有保存 API 预设。你可以在下面新增、排序和删除预设。
+          </div>
+        )}
 
         <ProjectPreferenceForm projectId={project.id} preference={project.preference} endpoints={project.providerEndpoints} />
       </SectionPanel>

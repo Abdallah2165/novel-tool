@@ -659,6 +659,16 @@ export function WorkbenchRunConsole({ project, mode }: WorkbenchRunConsoleProps)
     }
   }, [taskType]);
 
+  useEffect(() => {
+    if (activeApiPresetKey === "manual") {
+      return;
+    }
+
+    if (!apiPresets.some((preset) => preset.presetKey === activeApiPresetKey)) {
+      setActiveApiPresetKey("manual");
+    }
+  }, [activeApiPresetKey, apiPresets]);
+
   function applyApiPreset(preset: ApiPreset) {
     const nextState = buildAppliedApiPresetState(preset, {
       fallbackEndpointId: project.providerEndpoints[0]?.id,

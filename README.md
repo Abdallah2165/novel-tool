@@ -23,7 +23,7 @@
 - `review_content` / `minimal_fix` / `sync_state`
 - Draft / accept / revision 闭环
 - 章节编辑、自动保存、审稿定位
-- 项目级 API 预设
+- 项目级 API 预设（支持新增 / 删除 / 排序）
 - 远程 MCP 接入
 - 用户级 Grok / Tavily / Firecrawl 配置
 - 导出中心与服务端归档

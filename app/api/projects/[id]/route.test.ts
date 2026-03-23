@@ -49,7 +49,7 @@ describe("project route", () => {
     vi.resetModules();
   });
 
-  it("updates project preference defaults and active chapter through PATCH /api/projects/:id", async () => {
+  it("updates project preference presets as an ordered custom list through PATCH /api/projects/:id", async () => {
     prismaMock.project.findFirst.mockResolvedValue({ id: "project-1" });
     prismaMock.providerEndpoint.findFirst.mockResolvedValue({ id: "endpoint-1" });
     prismaMock.workspaceArtifact.findFirst.mockResolvedValue({ id: "chapter-artifact-1" });
@@ -61,8 +61,8 @@ describe("project route", () => {
       defaultTaskType: "generate_chapter",
       apiPresets: [
         {
-          presetKey: "writing",
-          label: "写作预设",
+          presetKey: "chapter-fast",
+          label: "章节快写",
           endpointId: "endpoint-1",
           modelId: "gpt-5",
           taskType: "generate_chapter",
@@ -70,21 +70,12 @@ describe("project route", () => {
           maxTokens: 1400,
         },
         {
-          presetKey: "review",
-          label: "审稿预设",
+          presetKey: "deep-review",
+          label: "深度审稿",
           endpointId: null,
-          modelId: null,
+          modelId: "gpt-5-mini",
           taskType: "review_content",
           temperature: 0.3,
-          maxTokens: 1200,
-        },
-        {
-          presetKey: "research",
-          label: "考据预设",
-          endpointId: null,
-          modelId: null,
-          taskType: "research_fact_check",
-          temperature: 0,
           maxTokens: 1200,
         },
       ],
@@ -109,13 +100,22 @@ describe("project route", () => {
           activeChapterArtifactId: "chapter-artifact-1",
           apiPresets: [
             {
-              presetKey: "writing",
-              label: "写作预设",
+              presetKey: "chapter-fast",
+              label: "章节快写",
               endpointId: "endpoint-1",
               modelId: "gpt-5",
               taskType: "generate_chapter",
               temperature: 0.7,
               maxTokens: 1400,
+            },
+            {
+              presetKey: "deep-review",
+              label: "深度审稿",
+              endpointId: null,
+              modelId: "gpt-5-mini",
+              taskType: "review_content",
+              temperature: 0.3,
+              maxTokens: 1200,
             },
           ],
         }),
@@ -161,8 +161,8 @@ describe("project route", () => {
         activeChapterArtifactId: "chapter-artifact-1",
         apiPresets: [
           {
-            presetKey: "writing",
-            label: "写作预设",
+            presetKey: "chapter-fast",
+            label: "章节快写",
             endpointId: "endpoint-1",
             modelId: "gpt-5",
             taskType: "generate_chapter",
@@ -170,21 +170,12 @@ describe("project route", () => {
             maxTokens: 1400,
           },
           {
-            presetKey: "review",
-            label: "审稿预设",
+            presetKey: "deep-review",
+            label: "深度审稿",
             endpointId: null,
-            modelId: null,
+            modelId: "gpt-5-mini",
             taskType: "review_content",
             temperature: 0.3,
-            maxTokens: 1200,
-          },
-          {
-            presetKey: "research",
-            label: "考据预设",
-            endpointId: null,
-            modelId: null,
-            taskType: "research_fact_check",
-            temperature: 0,
             maxTokens: 1200,
           },
         ],
@@ -200,8 +191,8 @@ describe("project route", () => {
         activeChapterArtifactId: "chapter-artifact-1",
         apiPresets: [
           {
-            presetKey: "writing",
-            label: "写作预设",
+            presetKey: "chapter-fast",
+            label: "章节快写",
             endpointId: "endpoint-1",
             modelId: "gpt-5",
             taskType: "generate_chapter",
@@ -209,21 +200,12 @@ describe("project route", () => {
             maxTokens: 1400,
           },
           {
-            presetKey: "review",
-            label: "审稿预设",
+            presetKey: "deep-review",
+            label: "深度审稿",
             endpointId: null,
-            modelId: null,
+            modelId: "gpt-5-mini",
             taskType: "review_content",
             temperature: 0.3,
-            maxTokens: 1200,
-          },
-          {
-            presetKey: "research",
-            label: "考据预设",
-            endpointId: null,
-            modelId: null,
-            taskType: "research_fact_check",
-            temperature: 0,
             maxTokens: 1200,
           },
         ],
@@ -251,8 +233,8 @@ describe("project route", () => {
         defaultModel: "gpt-5",
         apiPresets: [
           {
-            presetKey: "writing",
-            label: "写作预设",
+            presetKey: "chapter-fast",
+            label: "章节快写",
             endpointId: "endpoint-1",
             modelId: "gpt-5",
             taskType: "generate_chapter",
@@ -260,21 +242,12 @@ describe("project route", () => {
             maxTokens: 1400,
           },
           {
-            presetKey: "review",
-            label: "审稿预设",
+            presetKey: "deep-review",
+            label: "深度审稿",
             endpointId: null,
-            modelId: null,
+            modelId: "gpt-5-mini",
             taskType: "review_content",
             temperature: 0.3,
-            maxTokens: 1200,
-          },
-          {
-            presetKey: "research",
-            label: "考据预设",
-            endpointId: null,
-            modelId: null,
-            taskType: "research_fact_check",
-            temperature: 0,
             maxTokens: 1200,
           },
         ],

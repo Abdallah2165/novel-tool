@@ -587,9 +587,18 @@ async function main() {
     );
     assertOk(analysisEndpoint, "analysis endpoint creation");
 
+    const backupPresetConfig = {
+      presetKey: "backup-writer",
+      label: "备用写作",
+      endpointId: writingEndpoint.data.id,
+      modelId: "writer-backup-model",
+      taskType: "generate_setting",
+      temperature: 0.45,
+      maxTokens: 1100,
+    };
     const writingPresetConfig = {
-      presetKey: "writing",
-      label: "写作预设",
+      presetKey: "chapter-fast",
+      label: "章节快写",
       endpointId: writingEndpoint.data.id,
       modelId: "writer-model",
       taskType: "generate_chapter",
@@ -597,8 +606,8 @@ async function main() {
       maxTokens: 1501,
     };
     const reviewPresetConfig = {
-      presetKey: "review",
-      label: "审稿预设",
+      presetKey: "deep-review",
+      label: "深度审稿",
       endpointId: analysisEndpoint.data.id,
       modelId: "reviewer-model",
       taskType: "review_content",
@@ -606,8 +615,8 @@ async function main() {
       maxTokens: 901,
     };
     const researchPresetConfig = {
-      presetKey: "research",
-      label: "考据预设",
+      presetKey: "harbor-research",
+      label: "港口考据",
       endpointId: analysisEndpoint.data.id,
       modelId: "researcher-model",
       taskType: "research_fact_check",
@@ -625,19 +634,39 @@ async function main() {
           defaultModel: "writer-model",
           defaultTaskType: "generate_chapter",
           activeChapterArtifactId: chapterArtifact.id,
-          apiPresets: [writingPresetConfig, reviewPresetConfig, researchPresetConfig],
+          apiPresets: [backupPresetConfig, writingPresetConfig, reviewPresetConfig, researchPresetConfig],
         }),
       },
       cookies,
     );
     assertOk(projectPreferenceUpdate, "project preference update");
 
+    const projectPreferenceReorder = await fetchJson(
+      `${baseUrl}/api/projects/${projectId}`,
+      {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          defaultEndpointId: writingEndpoint.data.id,
+          defaultModel: "writer-model",
+          defaultTaskType: "generate_chapter",
+          activeChapterArtifactId: chapterArtifact.id,
+          apiPresets: [reviewPresetConfig, writingPresetConfig, researchPresetConfig],
+        }),
+      },
+      cookies,
+    );
+    assertOk(projectPreferenceReorder, "project preference reorder");
+
     const projectDetail = await fetchJson(`${baseUrl}/api/projects/${projectId}`, { method: "GET" }, cookies);
     assertOk(projectDetail, "project detail");
     const apiPresets = projectDetail.data.preference?.apiPresets ?? [];
     assert(apiPresets.length === 3, "project api presets were not persisted.");
-    assert(apiPresets[0]?.modelId === "writer-model", "writing preset model was not persisted.");
-    assert(apiPresets[1]?.taskType === "review_content", "review preset task type was not persisted.");
+    assert(apiPresets[0]?.presetKey === "deep-review", "reordered review preset was not persisted first.");
+    assert(apiPresets[1]?.presetKey === "chapter-fast", "reordered writing preset was not persisted second.");
+    assert(apiPresets[2]?.presetKey === "harbor-research", "reordered research preset was not persisted third.");
+    assert(apiPresets[0]?.modelId === "reviewer-model", "review preset model was not persisted.");
+    assert(apiPresets[1]?.taskType === "generate_chapter", "writing preset task type was not persisted.");
     assert(apiPresets[2]?.maxTokens === 701, "research preset maxTokens was not persisted.");
 
     const writingGenerate = await fetchJson(

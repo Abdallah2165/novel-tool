@@ -136,7 +136,7 @@ export async function PATCH(
       updateData.activeChapterArtifactId = payload.activeChapterArtifactId;
     }
     if (payload.apiPresets !== undefined) {
-      updateData.apiPresets = toPrismaJson(normalizeApiPresets(payload.apiPresets));
+      updateData.apiPresets = toPrismaJson(normalizeApiPresets(payload.apiPresets, { fallbackToDefaults: false }));
     }
 
     const createData: Prisma.ProjectPreferenceUncheckedCreateInput = {
