@@ -59,6 +59,7 @@
 - 先选择模型接口与模型名时，会由模型根据题材生成首问，并在每次回答后动态决定下一问和推荐选项
 - 当所选 OpenAI 端点使用 `Responses API` 时，首问与后续追问会实时流式返回到页面
 - 没有选择模型接口时，会自动回退到当前内置本地问卷，不会阻塞项目初始化
+- 流式返回是显式协商能力：前端会带 `Accept: application/x-ndjson, application/json` 请求实时结果；脚本、CI 和默认调用方仍走 JSON 返回，避免破坏既有 smoke / release 合同
 - 模型接口健康检查只验证“默认模型的最小探活请求”；如果正式生成携带大上下文、不同模型名或上游网关限制不同，仍可能在生成阶段失败
 
 ## 运行架构
@@ -184,6 +185,28 @@ docker compose --env-file .env.docker up --build
 docker compose --env-file .env.docker down
 ```
 
+### 低配服务器分支
+
+如果你的服务器规格只有 `2C2G` 或更低，建议直接使用低配部署分支，而不是在主分支上本机 `build`：
+
+```bash
+git clone -b chore/low-spec-deploy-tuning https://github.com/sum2yang/novel-tool.git
+cd novel-tool
+```
+
+这个分支已经合入当前主分支功能，同时额外带了更保守的部署调优：
+
+- `app` 容器默认注入 `NODE_OPTIONS=--max-old-space-size=768`
+- `app` 容器默认注入 `MALLOC_ARENA_MAX=2`
+- `postgres` 默认使用更低的 `shared_buffers / work_mem / max_connections`
+- `docker-entrypoint.sh` 直接调用本地 Prisma / Next 可执行文件，减少 `npx` 带来的额外启动开销
+
+低配机器建议：
+
+- 不要在服务器上执行 `docker compose up --build`
+- 优先让 GitHub Actions 构建 GHCR 镜像，再在服务器执行 `docker compose pull && docker compose up -d --no-build`
+- 如果 `postgres + minio + app` 全部放在同一台低配机器，建议额外开启 swap，或者把对象存储 / 数据库外置
+
 ## 常用脚本
 
 ### 基础开发
@@ -266,6 +289,12 @@ docker compose --env-file .env.docker down
 7. 在服务器执行 `docker compose pull app && docker compose up -d --no-build`
 8. 对 `/api/health` 和 `/login` 执行 smoke
 9. 如果失败，自动回滚到上一版环境文件、上一版 commit 和上一版镜像
+
+分支选择建议：
+
+- 常规服务器使用 `main`
+- 低内存服务器优先使用 `chore/low-spec-deploy-tuning`
+- 两个分支都保持同一功能线，低配分支只额外携带部署参数与启动开销优化
 
 ## 远端部署报告
 
