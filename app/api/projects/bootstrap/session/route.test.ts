@@ -181,6 +181,7 @@ describe("project onboarding create route", () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          accept: "application/x-ndjson",
         },
         body: JSON.stringify({
           genre: "港综商战",
@@ -269,6 +270,7 @@ describe("project onboarding create route", () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          accept: "application/x-ndjson",
         },
         body: JSON.stringify({
           genre: "港综商战",

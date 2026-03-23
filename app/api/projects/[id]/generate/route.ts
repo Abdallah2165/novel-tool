@@ -306,6 +306,11 @@ function createNdjsonStreamWriter() {
   };
 }
 
+function requestWantsNdjson(request: Request) {
+  const accept = request.headers.get("accept") ?? "";
+  return accept.includes("application/x-ndjson");
+}
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -666,7 +671,7 @@ export async function POST(
       });
     };
 
-    if (shouldUseStreamingGeneration(endpoint)) {
+    if (shouldUseStreamingGeneration(endpoint) && requestWantsNdjson(request)) {
       const execution = await executeGenerationStream({
         endpoint,
         modelId: payload.modelId,

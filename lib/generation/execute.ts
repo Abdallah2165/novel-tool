@@ -291,6 +291,8 @@ export async function executeGenerationStream(
   const loadedMcpTools = await loadMcpTools(input.mcpServers ?? []);
   const completed = createDeferredPromise<GenerationExecutionResult>();
   const finishMetadata = createDeferredPromise<GenerationStreamCompletionMetadata>();
+  void completed.promise.catch(() => undefined);
+  void finishMetadata.promise.catch(() => undefined);
   let settled = false;
   let streamedText = "";
 

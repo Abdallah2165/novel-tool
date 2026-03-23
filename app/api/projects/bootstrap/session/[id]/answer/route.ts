@@ -32,6 +32,11 @@ function createNdjsonStreamWriter() {
   };
 }
 
+function requestWantsNdjson(request: Request) {
+  const accept = request.headers.get("accept") ?? "";
+  return accept.includes("application/x-ndjson");
+}
+
 async function updateSerializedOnboardingSession(input: {
   sessionId: string;
   status: "active" | "ready";
@@ -168,7 +173,7 @@ export async function POST(
             dynamicHistory: nextHistory,
           });
 
-          if (shouldUseStreamingGeneration(endpoint)) {
+          if (shouldUseStreamingGeneration(endpoint) && requestWantsNdjson(request)) {
             const execution = await planAiOnboardingQuestionStream({
               endpoint,
               modelId: summary.runtime.modelId,

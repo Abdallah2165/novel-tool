@@ -365,6 +365,7 @@ describe("project onboarding answer route", () => {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          accept: "application/x-ndjson",
         },
         body: JSON.stringify({
           action: "answer",

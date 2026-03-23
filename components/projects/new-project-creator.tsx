@@ -758,6 +758,7 @@ export function NewProjectCreator({
         method: "POST",
         headers: {
           "content-type": "application/json",
+          accept: "application/x-ndjson, application/json",
         },
         body: JSON.stringify({
           name: guidedSeed.name.trim(),
@@ -803,6 +804,7 @@ export function NewProjectCreator({
         method: "POST",
         headers: {
           "content-type": "application/json",
+          accept: "application/x-ndjson, application/json",
         },
         body: JSON.stringify({
           action,

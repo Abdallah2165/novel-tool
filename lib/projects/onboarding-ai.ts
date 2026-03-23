@@ -278,6 +278,7 @@ export async function planAiOnboardingQuestionStream(
   }
 
   const completed = createDeferredPromise<DynamicOnboardingQuestion>();
+  void completed.promise.catch(() => undefined);
   let settled = false;
   let streamedText = "";
 

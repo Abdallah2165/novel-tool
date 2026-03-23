@@ -784,6 +784,7 @@ export function WorkbenchRunConsole({ project, mode }: WorkbenchRunConsoleProps)
       method: "POST",
       headers: {
         "content-type": "application/json",
+        accept: "application/x-ndjson, application/json",
       },
       body: JSON.stringify({
         taskType: nextTaskType,
