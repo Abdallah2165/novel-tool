@@ -21,11 +21,13 @@
 - AI 引导模式支持“先选模型接口动态逐问”与“无接口回退本地问卷”双路径
 - 作者自带资料上传
 - 资料区支持批量上传作者材料
+- 空白创建上传作者材料后，会沿用资料区同一批量导入链路再执行初始化整理
 - `ingest_sources` 资料吸收与结构化整理
 - `generate_setting` / `generate_outline` / `generate_chapter`
 - `review_content` / `minimal_fix` / `sync_state`
 - Draft / accept / revision 闭环
 - 章节编辑、自动保存、审稿定位
+- 项目文件上下文在超长时会自动截断，避免勾选过多文件导致模型请求失败
 - 项目级 API 预设（支持新增 / 删除 / 排序）
 - OpenAI 端点支持 `Responses API` / `Chat Completions API` 显式切换
 - OpenAI `Responses API` 在任务执行与 AI 引导创建里支持流式返回

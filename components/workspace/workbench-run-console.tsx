@@ -1200,6 +1200,9 @@ export function WorkbenchRunConsole({ project, mode }: WorkbenchRunConsoleProps)
                           .join(" / ")
                       : "当前任务没有默认项目文件。"}
                   </p>
+                  <p className="mt-2 text-xs leading-6 text-[var(--muted-ink)]">
+                    勾选过多项目文件时，系统会自动截断或跳过超长内容，避免模型上下文过载。
+                  </p>
                 </div>
 
                 <div className="rounded-[24px] border border-[var(--line)] bg-[var(--paper)] p-4">
